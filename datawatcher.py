@@ -9,7 +9,7 @@ import sys
 import sched
 from setting.setting import host, dbname, dbuser, password 
 
-class Db():
+class Db(object):
     
     def __init__(self):
         try:
@@ -51,7 +51,8 @@ class Db():
 
     def nofeedbackintime(self):
         try :  
-            _db_data = self.db.query('select customer_id from positioninv group by customer_id having ')
+            _db_data = self.db.query('select customer_id \
+                from positioninv group by customer_id having ')
         except Exception, e:
             print traceback.print_exc()
             return
@@ -76,12 +77,12 @@ class Db():
         '''
         try: 
             _db_data = self.db.query('select * from        \
-            bussiness_member_recommend where status = 1    \ 
+            bussiness_member_recommend where status = 1    \
             and UNIX_TIMESTAMP() - created_at > 604800;')
             
             _db_data1 = self.db.query('select * from positioninv     \
-                where status = 2 and UNIX_TIMESTAMP() - completed_at \
-                > 604800; ')
+            where status = 2 and UNIX_TIMESTAMP() - completed_at     \
+            > 604800; ')
         except Exception, e:
             print traceback.print_exc()
             return
@@ -95,11 +96,16 @@ class Db():
         try:
             _db_data = self.db.query('select * from      \
             bussiness_member_recommend where status = 1  \
-            and UNIX_TIMESTAMP() - created_at > 259200;  \
-            ')
-            _db_data = self.db.query('select * from positioninv where \  
-            status = 2 and UNIX_TIMESTAMP() - completed_at > 259200;  \
-                ')
+            and UNIX_TIMESTAMP() - created_at > 259200;')
+            
+            _db_data = self.db.query('select * from positioninv \
+                where status = 2 and \
+                UNIX_TIMESTAMP() - completed_at > 259200;') 
+        except Exception, e:
+            print traceback.print_exc()
+            return
+        return _db_data
+
     def c_extremity_no_feedback(self):
         '''
             sieve (id, time, )
@@ -122,9 +128,8 @@ class Db():
             72小时无法处理将这个邀请置为过期，关闭此人推荐
         '''
         try :
-            _db_data - self.db.query('select inv_id,customer_id,   \ 
-            from positioninv where status = 0 and UNIX_TIMESTAMP() \
-            - completed_at > 259200')
+            _db_data - self.db.query('select inv_id,customer_id,from positioninv \
+                where status = 0 and UNIX_TIMESTAMP() - completed_at > 259200')
         except Exception, e:
             print traceback.print_exc()
             return
