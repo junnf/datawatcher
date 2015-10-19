@@ -57,17 +57,64 @@ class Db():
             return
         return _db_data
 
+    def b_extremity_no_feedback(self):
+        try:
+            _db_data = self.db.query('select bussiness_id   \
+                from bussiness_member_recommend             \
+                where status = 1 group by bussiness_id      \
+                having count(*) > 30 order by bussiness_id')
+            
+        except Exception, e:
+            print traceback.print_exc()
+            return
+
+        return _db_data
+    
+    def b_extremity_no_feedback_del_recommend(self):
+        '''
+            7天未处理 删除推荐
+        '''
+        try: 
+            _db_data = self.db.query('select * from        \
+            bussiness_member_recommend where status = 1    \ 
+            and UNIX_TIMESTAMP() - created_at > 604800;')
+            
+            _db_data1 = self.db.query('select * from positioninv     \
+                where status = 2 and UNIX_TIMESTAMP() - completed_at \
+                > 604800; ')
+        except Exception, e:
+            print traceback.print_exc()
+            return
+        
+        return _db_data
+
+    def b_extremity_no_feedback_stop_recommend(self):
+        '''
+            三天没有操作，停止推荐，并且通知
+        '''
+        try:
+            _db_data = self.db.query('select * from      \
+            bussiness_member_recommend where status = 1  \
+            and UNIX_TIMESTAMP() - created_at > 259200;  \
+            ')
+            _db_data = self.db.query('select * from positioninv where \  
+            status = 2 and UNIX_TIMESTAMP() - completed_at > 259200;  \
+                ')
     def c_extremity_no_feedback(self):
         '''
             sieve (id, time, )
         '''
         try :
-            _db_data = self.db.query('select inv_id, customer_id, created_at, status  \
-            from positioninv where status = 0')
+            #
+            _db_data = self.db.query('select inv_id, customer_id,  \ 
+            completed_at, status from positioninv where status = 0')
         except Exception, e:
             print traceback.print_exc()
             return
         return _db_data
+
+def test():
+    pass
 
 def task():
     
@@ -92,17 +139,21 @@ def task():
 
     #172800s = 48h
     member4 = db.c_extremity_no_feedback()
-    _now_time = time.time()
-    for _mem in member4:
+    for _mem1 in member4:
       #created_at is time?
-        if abs((_mem['created_at'] + 172800) - _now_time) <= 3600:
+        if abs((_mem['completed_at'] + 172800) - time.time()) <= 3600:
             #notify
             pass
-        if  abs((_mem['created_at'] + 259200) - _now_time) <= 3600:
+        if  abs((_mem['completed_at'] + 259200) - time.time()) <= 3600:
             #标记过期
-
+            pass
             #关闭人员推荐
 
+    member5 = db.b_extremity_no_feedback()
+        #notify b-member
+    #_now_time2 = time.time()
+    for _mem2 in member5:
+        if abs((_mem['']))
 
 if __name__ == '__main__':
 #   task start
