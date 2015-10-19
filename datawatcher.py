@@ -106,13 +106,30 @@ class Db():
         '''
         try :
             #
-            _db_data = self.db.query('select inv_id, customer_id,  \ 
-            completed_at, status from positioninv where status = 0')
+            #_db_data = self.db.query('select inv_id, customer_id,  \ 
+            #completed_at, status from positioninv where status = 0')
+            _db_data1 = self.db.query('select inv_id,customer_id,   \
+            from positioninv where status = 0 and UNIX_TIMESTAMP()  \
+            - completed_at > 172800  ')
         except Exception, e:
             print traceback.print_exc()
             return
         return _db_data
 
+    def c_extremity_no_feedback_close_recommend(self):
+
+        '''
+            72小时无法处理将这个邀请置为过期，关闭此人推荐
+        '''
+        try :
+            _db_data - self.db.query('select inv_id,customer_id,   \ 
+            from positioninv where status = 0 and UNIX_TIMESTAMP() \
+            - completed_at > 259200')
+        except Exception, e:
+            print traceback.print_exc()
+            return
+        return _db_data
+            
 def test():
     pass
 
@@ -137,23 +154,11 @@ def task():
     member3 = db.memberx3x5()
     #continue_recommend(member3)
 
-    #172800s = 48h
     member4 = db.c_extremity_no_feedback()
-    for _mem1 in member4:
-      #created_at is time?
-        if abs((_mem['completed_at'] + 172800) - time.time()) <= 3600:
-            #notify
-            pass
-        if  abs((_mem['completed_at'] + 259200) - time.time()) <= 3600:
-            #标记过期
-            pass
-            #关闭人员推荐
 
     member5 = db.b_extremity_no_feedback()
         #notify b-member
     #_now_time2 = time.time()
-    for _mem2 in member5:
-        if abs((_mem['']))
 
 if __name__ == '__main__':
 #   task start
